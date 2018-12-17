@@ -22,7 +22,8 @@ Interval.prototype.sharp = function() {
     return intervals[value];
 };
 
-Interval.prototype.plus = function(intervalString) {
+
+Interval.prototype.getSum = function (intervalString) {
   const accidentalString = intervalString.match(accidentalRegExp)[0];
   const accidentalValue = Intervals.getAccidentalValue(accidentalString);
   const referenceIntervalString = intervalString.match(intervalDigitRegExp)[0];
@@ -30,15 +31,30 @@ Interval.prototype.plus = function(intervalString) {
   const sum = accidentalValue + referenceInterval.value + this.value;
 
   const noChange = ((sum % 12) === 0);
-  if (noChange) {return this;}
+  if (noChange) {return this.value;}
 
-  // code below here running means there was a change
+  // find destination value since it changed
   var value;
   if (sum < 0) {
     value = 12 + (sum % 12);
   } else {
     value = (sum % 12);
   }
+  return value;
+};
+
+Interval.prototype.getDifference = function (intervalString) {
+  var value = Interval.getSum(intervalString).bind(this);
+  return -value + 12;
+};
+
+Interval.prototype.plus = function(intervalString) {
+  const value = this.getSum(intervalString);
+  return Intervals.fromValue(value);
+};
+
+Interval.prototype.minus = function(intervalString) {
+  var value = this.getDifference(intervalString);
   return Intervals.fromValue(value);
 };
 
@@ -90,7 +106,11 @@ Intervals.getAccidentalValue = function(accidentalString) {
         }
     }
     return count;
-}
+};
+
+
+Intervals.getSum = Interval.prototype.getSum;
+Intervals.getDifference = Interval.prototype.getDifference;
 
 
 
