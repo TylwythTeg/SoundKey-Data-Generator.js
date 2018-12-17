@@ -65,6 +65,8 @@ Intervals.getAccidentalValue = function(accidentalString) {
             count++;
         } else if (char === "b") {
             count--;
+        } else {
+           throw new TypeError("accidentalString must only have # and b characters");
         }
     }
     return count;
