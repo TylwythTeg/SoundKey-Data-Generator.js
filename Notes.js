@@ -13,23 +13,21 @@ function Note(name) {
     notes.push(this);
     this.value = notes.indexOf(this);
 }
+
+Note.prototype.fromName = function(name) {
+    var note = fromCustomName(name);
+    note = Object.create(note);
+    return note;
+};
+
+Note.prototype.fromValue = function(value) {
+    return Utils.Array.getFrom("value", value, notes);
+};
 /* Interval extensions */
-Note.prototype.flat = function() {
-    return Interval.flat.apply(this);
-};
-
-Note.prototype.sharp = function() {
-    return Interval.sharp.apply(this);
-};
-
-Note.prototype.plus = function(intervalString) {
-    var value = Interval.getSum.call(this, intervalString);
-    return Notes.fromValue(value);
-};
-Note.prototype.minus = function(intervalString) {
-    var value = Interval.getDifference.call(this, intervalString);
-    return Notes.fromValue(value);
-};
+Note.prototype.flat = Interval.flat.bind(this);
+Note.prototype.sharp = Interval.sharp.bind(this);
+Note.prototype.plus = Interval.plus.bind(this);
+Note.prototype.minus = Interval.minus.bind(this);
 
 var names = [
     "A",
@@ -58,15 +56,7 @@ Notes.list = notes;
 
 
 
-Notes.fromName = function(name) {
-    var note = fromCustomName(name);
-    note = Object.create(note);
-    return note;
-};
 
-Notes.fromValue = function(value) {
-    return Utils.Array.getFrom("value", value, notes);
-};
 
 /* Accepts [A-G] + (b|#)? */
 function fromNormalizedName(name) {
@@ -84,12 +74,16 @@ function fromCustomName(str) {
     return notes[index];
 }
 
+Note.prototype.fromName = Note.prototype.fromName;
+Note.prototype.fromValue= Note.prototype.fromValue;
+Note.fromName = Note.prototype.fromName;
+
 module.exports = Notes;
 
 // Test space
 
 console.log(Notes.list);
-console.log(Notes.fromName("G###").name);
-console.log(Notes.fromName("F#").plus("b6"));
-console.log(Notes.fromName("F#").plus("bb7"));
-console.log(Notes.fromName("A#").plus("##7"));
+console.log(Note.fromName("G###").name);
+console.log(Note.fromName("F#").plus("b6"));
+console.log(Note.fromName("F#").plus("bb7"));
+console.log(Note.fromName("A#").plus("##7"));

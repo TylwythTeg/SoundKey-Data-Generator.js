@@ -1,6 +1,4 @@
 const Utils = require('./Utils.js');
-
-const noteRegExp = "[A-G]";
 const intervalDigitRegExp = "[1,2,3,4,5,6,7,8,9,10,11,12,13]+";
 const accidentalRegExp = "[#,b]+";
 
@@ -11,6 +9,14 @@ function Interval(name) {
     intervals.push(this);
     this.value = intervals.indexOf(this);
 }
+
+Interval.prototype.fromName = function(name) {
+    return Utils.Array.getFrom("name", name, intervals);
+};
+
+Interval.prototype.fromValue = function(value) {
+    return Utils.Array.getFrom("value", value, intervals);
+};
 
 Interval.prototype.flat = function() {
     const isFirst = (this.value === 0);
@@ -53,18 +59,19 @@ Interval.prototype.getSum = function(intervalString) {
 };
 
 Interval.prototype.getDifference = function(intervalString) {
-    var value = Interval.getSum(intervalString).bind(this);
+    var value = Interval.prototype.getSum.bind(this, intervalString);
     return -value + 12;
 };
 
 Interval.prototype.plus = function(intervalString) {
-    const value = this.getSum(intervalString);
-    return Intervals.fromValue(value);
+    console.log(Interval);
+    const value = Interval.prototype.getSum.bind(this, intervalString);
+    return this.prototype.fromValue(value);
 };
 
 Interval.prototype.minus = function(intervalString) {
-    var value = this.getDifference(intervalString);
-    return Intervals.fromValue(value);
+    var value = Interval.prototype.getDifference.bind(this, intervalString);
+    return this.prototype.fromValue(value);
 };
 
 var names = [
@@ -92,14 +99,6 @@ var names = [
 var Intervals = {};
 Intervals.list = intervals;
 
-Intervals.fromName = function(name) {
-    return Utils.Array.getFrom("name", name, intervals);
-};
-
-Intervals.fromValue = function(value) {
-    return Utils.Array.getFrom("value", value, intervals);
-};
-
 
 Intervals.getAccidentalValue = function(accidentalString) {
     var count = 0;
@@ -120,9 +119,16 @@ Intervals.getAccidentalValue = function(accidentalString) {
 
 Intervals.getSum = Interval.prototype.getSum;
 Intervals.getDifference = Interval.prototype.getDifference;
+Intervals.flat = Interval.prototype.flat;
+Intervals.sharp = Interval.prototype.sharp;
+Intervals.plus = Interval.prototype.minus;
+Intervals.minus = Interval.prototype.plus;
+Interval.prototype.fromName = Interval.prototype.fromName;
+Interval.prototype.fromValue= Interval.prototype.fromValue;
+Interval.fromName = Interval.prototype.fromName;
 
 
 
 module.exports = Intervals;
 
-console.log(Intervals.fromName("2").plus("bb7"));
+console.log(Interval.fromName("2").plus("bb7"));
