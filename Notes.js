@@ -24,10 +24,18 @@ Note.prototype.fromValue = function(value) {
     return Utils.Array.getFrom("value", value, notes);
 };
 /* Interval extensions */
-Note.prototype.flat = Interval.flat.bind(this);
-Note.prototype.sharp = Interval.sharp.bind(this);
-Note.prototype.plus = Interval.plus.bind(this);
-Note.prototype.minus = Interval.minus.bind(this);
+Note.prototype.flat = function () {
+  return Interval.prototype.flat.call(this);
+};
+Note.prototype.sharp = function () {
+  return Interval.prototype.sharp.call(this);
+};
+Note.prototype.plus = function (str) {
+  return Interval.prototype.plus.call(this, str);
+};
+Note.prototype.minus = function (str) {
+  return Interval.prototype.minus.call(this, str);
+};
 
 var names = [
     "A",
@@ -74,8 +82,6 @@ function fromCustomName(str) {
     return notes[index];
 }
 
-Note.prototype.fromName = Note.prototype.fromName;
-Note.prototype.fromValue= Note.prototype.fromValue;
 Note.fromName = Note.prototype.fromName;
 
 module.exports = Notes;

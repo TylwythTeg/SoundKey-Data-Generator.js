@@ -40,7 +40,7 @@ Interval.prototype.getSum = function(intervalString) {
     const accidentalString = intervalString.match(accidentalRegExp)[0];
     const accidentalValue = Intervals.getAccidentalValue(accidentalString);
     const referenceIntervalString = intervalString.match(intervalDigitRegExp)[0];
-    const referenceInterval = Intervals.fromName(referenceIntervalString);
+    const referenceInterval = Interval.fromName(referenceIntervalString);
     const sum = accidentalValue + referenceInterval.value + this.value;
 
     const noChange = ((sum % 12) === 0);
@@ -59,21 +59,19 @@ Interval.prototype.getSum = function(intervalString) {
 };
 
 Interval.prototype.getDifference = function(intervalString) {
-    var value = Interval.prototype.getSum.bind(this, intervalString);
+    var value = Interval.prototype.getSum.call(this, intervalString);
     return -value + 12;
 };
 
 Interval.prototype.plus = function(intervalString) {
-    console.log(Interval);
-    const value = Interval.prototype.getSum.bind(this, intervalString);
-    return this.prototype.fromValue(value);
+    const value = Interval.prototype.getSum.call(this, intervalString);
+    return this.fromValue(value);
 };
 
 Interval.prototype.minus = function(intervalString) {
-    var value = Interval.prototype.getDifference.bind(this, intervalString);
-    return this.prototype.fromValue(value);
+    var value = Interval.prototype.getDifference.call(this, intervalString);
+    return this.fromValue(value);
 };
-
 var names = [
     "1",
     "b2",
@@ -116,19 +114,12 @@ Intervals.getAccidentalValue = function(accidentalString) {
     return count;
 };
 
-
-Intervals.getSum = Interval.prototype.getSum;
-Intervals.getDifference = Interval.prototype.getDifference;
-Intervals.flat = Interval.prototype.flat;
-Intervals.sharp = Interval.prototype.sharp;
-Intervals.plus = Interval.prototype.minus;
-Intervals.minus = Interval.prototype.plus;
-Interval.prototype.fromName = Interval.prototype.fromName;
-Interval.prototype.fromValue= Interval.prototype.fromValue;
 Interval.fromName = Interval.prototype.fromName;
+Interval.getAccidentalValue = Intervals.getAccidentalValue;
+Interval.list = Intervals.list;
 
 
 
-module.exports = Intervals;
+module.exports = Interval;
 
-console.log(Interval.fromName("2").plus("bb7"));
+//console.log(Interval.fromName("2").plus("bb7"));
