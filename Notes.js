@@ -13,26 +13,15 @@ function Note(name) {
     notes.push(this);
     this.value = notes.indexOf(this);
 }
-
-Note.prototype.flat = function() {
-    const isFirstNote = (this.value === 0);
-    const getLast = (notes.length - 1);
-    const defaultCase = (this.value - 1) % 12;
-
-    const value = isFirstNote ? getLast : defaultCase;
-    return notes[value];
-  };
-
-  Note.prototype.sharp = function() {
-    const isLastNote = (this.value === (notes.length -1));
-    const getFirst = 0;
-    const defaultCase = ((this.value - 1) % 12);
-
-    const value = isLastNote ? getFirst : defaultCase;
-    return Notes.fromValue(value);
-  };
-
   /* Interval extensions */
+  Note.prototype.flat = function () {
+    return Interval.flat.apply(this);
+  };
+
+  Note.prototype.sharp = function () {
+    return Interval.sharp.apply(this);
+  };
+
   Note.prototype.plus = function (intervalString) {
     var value = Interval.getSum.call(this, intervalString);
     return Notes.fromValue(value);

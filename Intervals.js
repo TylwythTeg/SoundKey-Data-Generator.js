@@ -12,16 +12,23 @@ function Interval(name) {
     this.value = intervals.indexOf(this);
 }
 
-Interval.prototype.flat = function() {
-    var value = (this.value - 1) % 12;
-    return intervals[value];
+Interval.prototype.flat = function () {
+  const isFirst = (this.value === 0);
+  const getLast = (this.list.length - 1);
+  const defaultCase = (this.value - 1) % 12;
+
+  const value = isFirst ? getLast : defaultCase;
+  return this.fromValue[value];
 };
 
 Interval.prototype.sharp = function() {
-    var value = (this.value + 1) % 12;
-    return intervals[value];
-};
+  const isLast = (this.value === (this.list.length -1));
+  const getFirst = 0;
+  const defaultCase = ((this.value - 1) % 12);
 
+  const value = isLast? getFirst : defaultCase;
+  return this.fromValue(value);
+};
 
 Interval.prototype.getSum = function (intervalString) {
   const accidentalString = intervalString.match(accidentalRegExp)[0];
