@@ -13,23 +13,23 @@ function Note(name) {
     notes.push(this);
     this.value = notes.indexOf(this);
 }
-  /* Interval extensions */
-  Note.prototype.flat = function () {
+/* Interval extensions */
+Note.prototype.flat = function() {
     return Interval.flat.apply(this);
-  };
+};
 
-  Note.prototype.sharp = function () {
+Note.prototype.sharp = function() {
     return Interval.sharp.apply(this);
-  };
+};
 
-  Note.prototype.plus = function (intervalString) {
+Note.prototype.plus = function(intervalString) {
     var value = Interval.getSum.call(this, intervalString);
     return Notes.fromValue(value);
-  };
-  Note.prototype.minus = function (intervalString) {
+};
+Note.prototype.minus = function(intervalString) {
     var value = Interval.getDifference.call(this, intervalString);
     return Notes.fromValue(value);
-  };
+};
 
 var names = [
     "A",
@@ -70,18 +70,18 @@ Notes.fromValue = function(value) {
 
 /* Accepts [A-G] + (b|#)? */
 function fromNormalizedName(name) {
-  return Utils.Array.getFrom("name", name, notes);
+    return Utils.Array.getFrom("name", name, notes);
 }
 
 /* Accepts [A-G] + any sequence of #s or bs */
 function fromCustomName(str) {
-  const referenceNoteString = str.match(noteRegExp)[0];
-  const referenceNote = fromNormalizedName(referenceNoteString);
-  const accidentalString = str.match(accidentalRegExp)[0];
-  const accidentalValue = Interval.getAccidentalValue(accidentalString);
+    const referenceNoteString = str.match(noteRegExp)[0];
+    const referenceNote = fromNormalizedName(referenceNoteString);
+    const accidentalString = str.match(accidentalRegExp)[0];
+    const accidentalValue = Interval.getAccidentalValue(accidentalString);
 
-  var index = (referenceNote.value + accidentalValue) % 12;
-  return notes[index];
+    var index = (referenceNote.value + accidentalValue) % 12;
+    return notes[index];
 }
 
 module.exports = Notes;

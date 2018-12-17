@@ -12,57 +12,59 @@ function Interval(name) {
     this.value = intervals.indexOf(this);
 }
 
-Interval.prototype.flat = function () {
-  const isFirst = (this.value === 0);
-  const getLast = (this.list.length - 1);
-  const defaultCase = (this.value - 1) % 12;
+Interval.prototype.flat = function() {
+    const isFirst = (this.value === 0);
+    const getLast = (this.list.length - 1);
+    const defaultCase = (this.value - 1) % 12;
 
-  const value = isFirst ? getLast : defaultCase;
-  return this.fromValue[value];
+    const value = isFirst ? getLast : defaultCase;
+    return this.fromValue[value];
 };
 
 Interval.prototype.sharp = function() {
-  const isLast = (this.value === (this.list.length -1));
-  const getFirst = 0;
-  const defaultCase = ((this.value - 1) % 12);
+    const isLast = (this.value === (this.list.length - 1));
+    const getFirst = 0;
+    const defaultCase = ((this.value - 1) % 12);
 
-  const value = isLast? getFirst : defaultCase;
-  return this.fromValue(value);
+    const value = isLast ? getFirst : defaultCase;
+    return this.fromValue(value);
 };
 
-Interval.prototype.getSum = function (intervalString) {
-  const accidentalString = intervalString.match(accidentalRegExp)[0];
-  const accidentalValue = Intervals.getAccidentalValue(accidentalString);
-  const referenceIntervalString = intervalString.match(intervalDigitRegExp)[0];
-  const referenceInterval = Intervals.fromName(referenceIntervalString);
-  const sum = accidentalValue + referenceInterval.value + this.value;
+Interval.prototype.getSum = function(intervalString) {
+    const accidentalString = intervalString.match(accidentalRegExp)[0];
+    const accidentalValue = Intervals.getAccidentalValue(accidentalString);
+    const referenceIntervalString = intervalString.match(intervalDigitRegExp)[0];
+    const referenceInterval = Intervals.fromName(referenceIntervalString);
+    const sum = accidentalValue + referenceInterval.value + this.value;
 
-  const noChange = ((sum % 12) === 0);
-  if (noChange) {return this.value;}
+    const noChange = ((sum % 12) === 0);
+    if (noChange) {
+        return this.value;
+    }
 
-  // find destination value since it changed
-  var value;
-  if (sum < 0) {
-    value = 12 + (sum % 12);
-  } else {
-    value = (sum % 12);
-  }
-  return value;
+    // find destination value since it changed
+    var value;
+    if (sum < 0) {
+        value = 12 + (sum % 12);
+    } else {
+        value = (sum % 12);
+    }
+    return value;
 };
 
-Interval.prototype.getDifference = function (intervalString) {
-  var value = Interval.getSum(intervalString).bind(this);
-  return -value + 12;
+Interval.prototype.getDifference = function(intervalString) {
+    var value = Interval.getSum(intervalString).bind(this);
+    return -value + 12;
 };
 
 Interval.prototype.plus = function(intervalString) {
-  const value = this.getSum(intervalString);
-  return Intervals.fromValue(value);
+    const value = this.getSum(intervalString);
+    return Intervals.fromValue(value);
 };
 
 Interval.prototype.minus = function(intervalString) {
-  var value = this.getDifference(intervalString);
-  return Intervals.fromValue(value);
+    var value = this.getDifference(intervalString);
+    return Intervals.fromValue(value);
 };
 
 var names = [
@@ -109,7 +111,7 @@ Intervals.getAccidentalValue = function(accidentalString) {
         } else if (char === "b") {
             count--;
         } else {
-           throw new TypeError("accidentalString must only have # and b characters");
+            throw new TypeError("accidentalString must only have # and b characters");
         }
     }
     return count;
