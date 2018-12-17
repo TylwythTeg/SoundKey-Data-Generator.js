@@ -3,6 +3,7 @@ const Utils = require('./Utils.js');
 
 const noteRegExp = "[A-G]";
 const accidentalRegExp = "[#,b]+";
+const intervalDigitRegExp = "[1,2,3,4,5,6,7,8,9,10,11,12,13]+";
 
 
 const notes = [];
@@ -30,6 +31,27 @@ Note.prototype.flat = function() {
 
     const value = isLastNote ? getFirst : defaultCase;
     return notes[value];
+  };
+
+  /* note.plus("bb7") */
+  Note.prototype.plus = function(intervalString) {
+    const accidentalString = intervalString.match(accidentalRegExp)[0];
+    const accidentalValue = Interval.getAccidentalValue(accidentalString);
+    const referenceIntervalString = intervalString.match(intervalDigitRegExp)[0];
+    const referenceInterval = Interval.fromName(referenceIntervalString);
+    const sum = accidentalValue + referenceInterval.value + this.value;
+    const noChange = ((sum % 12) === 0);
+
+    if (noChange) {return this;}
+
+    // code below here running means there was a change
+    var value;
+    if (sum < 0) {
+      value = 12 + (sum % 12);
+    } else {
+      value = (sum % 12);
+    }
+    return Notes.fromValue(value);
   };
 
 var names = [
@@ -91,3 +113,6 @@ module.exports = Notes;
 
 console.log(Notes.list);
 console.log(Notes.fromName("G###").name);
+console.log(Notes.fromName("F#").plus("b6"));
+console.log(Notes.fromName("F#").plus("bb7"));
+console.log(Notes.fromName("A#").plus("##7"));

@@ -22,6 +22,26 @@ Interval.prototype.sharp = function() {
     return intervals[value];
 };
 
+Interval.prototype.plus = function(intervalString) {
+  const accidentalString = intervalString.match(accidentalRegExp)[0];
+  const accidentalValue = Intervals.getAccidentalValue(accidentalString);
+  const referenceIntervalString = intervalString.match(intervalDigitRegExp)[0];
+  const referenceInterval = Intervals.fromName(referenceIntervalString);
+  const sum = accidentalValue + referenceInterval.value + this.value;
+
+  const noChange = ((sum % 12) === 0);
+  if (noChange) {return this;}
+
+  // code below here running means there was a change
+  var value;
+  if (sum < 0) {
+    value = 12 + (sum % 12);
+  } else {
+    value = (sum % 12);
+  }
+  return Intervals.fromValue(value);
+};
+
 var names = [
     "1",
     "b2",
@@ -74,28 +94,6 @@ Intervals.getAccidentalValue = function(accidentalString) {
 
 
 
-Interval.value = function(intervalString) {
-    var referenceInterval = intervalString.match(intervalDigitRegExp)[0];
-    var referenceIntervalObject = Intervals.fromName(referenceInterval);
-    var referenceValue = referenceIntervalObject.value;
-
-    var accidental = intervalString.match(accidentalRegExp)[0];
-    var accidentalValue = Intervals.getAccidentalValue(accidental);
-
-    if (instruction === 0) {
-        return referenceValue;
-    }
-
-    var instruction = accidentalValue < 0 ? "flat" : "sharp";
-
-    var count = Math.abs(accidentalValue);
-    var newInterval = null;
-    for (var i = 0; i < count; i++) {
-        newInterval = referenceIntervalObject[instruction]();
-    }
-    return newInterval.value;
-};
-
-
-
 module.exports = Intervals;
+
+console.log(Intervals.fromName("2").plus("bb7"));
