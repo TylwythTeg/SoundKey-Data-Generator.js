@@ -17,6 +17,7 @@ const names = [
     "G",
     "G#"
 ];
+const NOTE_COUNT = names.length;
 
 function Note(name) {
     this.name = name;
@@ -66,7 +67,7 @@ function fromCustomName(str) {
     const accidentalString = str.match(accidentalRegExp)[0];
     const accidentalValue = Interval.getAccidentalValue(accidentalString);
 
-    var index = (referenceNote.value + accidentalValue) % 12;
+    var index = (referenceNote.value + accidentalValue) % NOTE_COUNT;
     return Note.list[index];
 }
 

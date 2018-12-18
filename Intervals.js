@@ -15,6 +15,7 @@ const names = [
     "b7",
     "7"
 ];
+const INTERVAL_COUNT = names.length;
 
 function Interval(name) {
     this.name = name;
@@ -41,7 +42,7 @@ Interval.fromValue = function(value) {
 Interval.prototype.flat = function() {
     const isFirst = (this.value === 0);
     const getLast = (this.list.length - 1);
-    const defaultCase = (this.value - 1) % 12;
+    const defaultCase = (this.value - 1) % INTERVAL_COUNT;
 
     const value = isFirst ? getLast : defaultCase;
     return this.fromValue[value];
@@ -50,7 +51,7 @@ Interval.prototype.flat = function() {
 Interval.prototype.sharp = function() {
     const isLast = (this.value === (this.list.length - 1));
     const getFirst = 0;
-    const defaultCase = ((this.value - 1) % 12);
+    const defaultCase = ((this.value - 1) % INTERVAL_COUNT);
 
     const value = isLast ? getFirst : defaultCase;
     return this.fromValue(value);
@@ -63,7 +64,7 @@ Interval.prototype.getSum = function(intervalString) {
     const referenceInterval = Interval.fromName(referenceIntervalString);
     const sum = accidentalValue + referenceInterval.value + this.value;
 
-    const noChange = ((sum % 12) === 0);
+    const noChange = ((sum % INTERVAL_COUNT) === 0);
     if (noChange) {
         return this.value;
     }
@@ -71,16 +72,16 @@ Interval.prototype.getSum = function(intervalString) {
     // find destination value since it changed
     var value;
     if (sum < 0) {
-        value = 12 + (sum % 12);
+        value = INTERVAL_COUNT + (sum % INTERVAL_COUNT);
     } else {
-        value = (sum % 12);
+        value = (sum % INTERVAL_COUNT);
     }
     return value;
 };
 
 Interval.prototype.getDifference = function(intervalString) {
     var value = Interval.prototype.getSum.call(this, intervalString);
-    return -value + 12;
+    return -value + INTERVAL_COUNT;
 };
 
 Interval.prototype.plus = function(intervalString) {
