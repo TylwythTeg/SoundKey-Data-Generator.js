@@ -74,7 +74,7 @@ Interval.prototype.getDifference = function(intervalString) {
     var value = Interval.prototype.getSum.call(this, intervalString);
     console.log("val",value);
     console.log("calc",-(value) + (INTERVAL_COUNT));
-    return -(value) + (INTERVAL_COUNT);
+    return (-(value) + (INTERVAL_COUNT) + this.value+1)% 12;
 };
 
 Interval.prototype.plus = function(intervalString) {

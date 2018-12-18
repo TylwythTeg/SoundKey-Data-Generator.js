@@ -90,3 +90,4 @@ console.log("A# + b2",Note.fromName("A#").plus("##7"));
 console.log("A# - b4",Note.fromName("A#").minus("b4"));
 console.log("A# flat",Note.fromName("A#").flat());
 console.log("A# sharp",Note.fromName("A#").sharp());
+console.log("A# sharp",Note.fromName("A#").minus("b5"));
