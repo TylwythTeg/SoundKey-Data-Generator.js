@@ -3,41 +3,7 @@ const Utils = require('./Utils.js');
 
 const noteRegExp = "[A-G]";
 const accidentalRegExp = "[#,b]+";
-
-
-const notes = [];
-
-/* Note */
-function Note(name) {
-    this.name = name;
-    notes.push(this);
-    this.value = notes.indexOf(this);
-}
-
-Note.prototype.fromName = function(name) {
-    var note = fromCustomName(name);
-    note = Object.create(note);
-    return note;
-};
-
-Note.prototype.fromValue = function(value) {
-    return Utils.Array.getFrom("value", value, notes);
-};
-/* Interval extensions */
-Note.prototype.flat = function () {
-  return Interval.prototype.flat.call(this);
-};
-Note.prototype.sharp = function () {
-  return Interval.prototype.sharp.call(this);
-};
-Note.prototype.plus = function (str) {
-  return Interval.prototype.plus.call(this, str);
-};
-Note.prototype.minus = function (str) {
-  return Interval.prototype.minus.call(this, str);
-};
-
-var names = [
+const names = [
     "A",
     "A#",
     "B",
@@ -52,23 +18,44 @@ var names = [
     "G#"
 ];
 
-(function buildNotes() {
-    names.forEach(function(str) {
-        Note[str] = new Note(str);
+function Note(name) {
+    this.name = name;
+    Note.list.push(this);
+    this.value = Note.list.indexOf(this);
+}
+
+Object.defineProperty(Note, "list", {
+  value: [],
+  writable: false
+});
+
+Note.prototype = Object.assign(Note.prototype, Interval.behavior);
+
+Note.fromName = function(name, nameOverride = false) {
+    var refNote = fromCustomName(name);
+    note = Object.create(refNote);
+
+    if (nameOverride) {
+      note.referenceName = refNote.name;
+      note.name = name;
+    } else {
+      note.referenceName = refNote.name;
+    }
+
+    return note;
+};
+
+Note.fromValue = function(value) {
+    return Note.list.find(function(item) {
+      return item.value === value;
     });
-})();
-
-/* Export */
-var Notes = {};
-Notes.list = notes;
-
-
-
-
+};
 
 /* Accepts [A-G] + (b|#)? */
 function fromNormalizedName(name) {
-    return Utils.Array.getFrom("name", name, notes);
+    return Note.list.find(function(note) {
+      return note.name === name;
+    });
 }
 
 /* Accepts [A-G] + any sequence of #s or bs */
@@ -79,16 +66,21 @@ function fromCustomName(str) {
     const accidentalValue = Interval.getAccidentalValue(accidentalString);
 
     var index = (referenceNote.value + accidentalValue) % 12;
-    return notes[index];
+    return Note.list[index];
 }
 
-Note.fromName = Note.prototype.fromName;
+(function buildNotes() {
+    names.forEach(function(str) {
+        Note[str] = new Note(str);
+    });
+    Object.freeze(Note.list);
+})();
 
-module.exports = Notes;
+module.exports = Note;
 
 // Test space
 
-console.log(Notes.list);
+console.log(Note.list);
 console.log(Note.fromName("G###").name);
 console.log(Note.fromName("F#").plus("b6"));
 console.log(Note.fromName("F#").plus("bb7"));

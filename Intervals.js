@@ -1,21 +1,48 @@
 const Utils = require('./Utils.js');
 const intervalDigitRegExp = "[1,2,3,4,5,6,7,8,9,10,11,12,13]+";
 const accidentalRegExp = "[#,b]+";
-
-const intervals = [];
+const names = [
+    "1",
+    "b2",
+    "2",
+    "b3",
+    "3",
+    "4",
+    "#4",
+    "5",
+    "b6",
+    "6",
+    "b7",
+    "7"
+];
 
 function Interval(name) {
     this.name = name;
-    intervals.push(this);
-    this.value = intervals.indexOf(this);
+    Interval.list.push(this);
+    this.value = Interval.list.indexOf(this);
 }
 
-Interval.prototype.fromName = function(name) {
-    return Utils.Array.getFrom("name", name, intervals);
+Object.defineProperty(Interval, "list", {
+  value: [],
+  writable: false
+});
+
+Interval.fromName = function(name) {
+    return Interval.list.find(function(item) {
+      return item.name === name;
+    });
+};
+Interval.fromValue = function(value) {
+    return Interval.list.find(function(item) {
+      return item.value === value;
+    });
 };
 
-Interval.prototype.fromValue = function(value) {
-    return Utils.Array.getFrom("value", value, intervals);
+
+Interval.prototype.fromName = function(value) {
+    return this.list.find(function(item) {
+      return item.name === value;
+    });
 };
 
 Interval.prototype.flat = function() {
@@ -38,7 +65,7 @@ Interval.prototype.sharp = function() {
 
 Interval.prototype.getSum = function(intervalString) {
     const accidentalString = intervalString.match(accidentalRegExp)[0];
-    const accidentalValue = Intervals.getAccidentalValue(accidentalString);
+    const accidentalValue = Interval.getAccidentalValue(accidentalString);
     const referenceIntervalString = intervalString.match(intervalDigitRegExp)[0];
     const referenceInterval = Interval.fromName(referenceIntervalString);
     const sum = accidentalValue + referenceInterval.value + this.value;
@@ -65,60 +92,48 @@ Interval.prototype.getDifference = function(intervalString) {
 
 Interval.prototype.plus = function(intervalString) {
     const value = Interval.prototype.getSum.call(this, intervalString);
-    return this.fromValue(value);
+    const constructor = Object.getPrototypeOf(this).constructor;
+    return constructor.fromValue(value);
 };
 
 Interval.prototype.minus = function(intervalString) {
     var value = Interval.prototype.getDifference.call(this, intervalString);
-    return this.fromValue(value);
+    const constructor = Object.getPrototypeOf(this).constructor;
+    return constructor.fromValue(value);
 };
-var names = [
-    "1",
-    "b2",
-    "2",
-    "b3",
-    "3",
-    "4",
-    "#4",
-    "5",
-    "b6",
-    "6",
-    "b7",
-    "7"
-];
 
-(function buildNotes() {
-    names.forEach(function(str) {
-        Interval[str] = new Interval(str);
-    });
-})();
-
-/* Export */
-var Intervals = {};
-Intervals.list = intervals;
-
-
-Intervals.getAccidentalValue = function(accidentalString) {
+Interval.getAccidentalValue = function(accidentalString) {
     var count = 0;
     for (i in accidentalString) {
         var char = accidentalString[i];
 
         if (char === "#") {
             count++;
+            continue;
         } else if (char === "b") {
             count--;
-        } else {
-            throw new TypeError("accidentalString must only have # and b characters");
+            continue;
         }
+
+        throw new TypeError("accidentalString must only have # and b characters");
     }
     return count;
 };
 
-Interval.fromName = Interval.prototype.fromName;
-Interval.getAccidentalValue = Intervals.getAccidentalValue;
-Interval.list = Intervals.list;
 
+Interval.behavior = {
+  flat: Interval.prototype.flat,
+  sharp: Interval.prototype.sharp,
+  minus: Interval.prototype.minus,
+  plus: Interval.prototype.plus,
+};
 
+(function buildIntervals() {
+    names.forEach(function(str) {
+        Interval[str] = new Interval(str);
+    });
+    Object.freeze(Interval.list);
+})();
 
 module.exports = Interval;
 
