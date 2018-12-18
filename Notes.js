@@ -86,4 +86,7 @@ console.log(Note.list);
 console.log(Note.fromName("G###").name);
 console.log(Note.fromName("F#").plus("b6"));
 console.log(Note.fromName("F#").plus("bb7"));
-console.log(Note.fromName("A#").plus("##7"));
+console.log("A# + b2",Note.fromName("A#").plus("##7"));
+console.log("A# - b4",Note.fromName("A#").minus("b4"));
+console.log("A# flat",Note.fromName("A#").flat());
+console.log("A# sharp",Note.fromName("A#").sharp());

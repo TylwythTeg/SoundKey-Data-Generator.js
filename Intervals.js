@@ -40,21 +40,12 @@ Interval.fromValue = function(value) {
 };
 
 Interval.prototype.flat = function() {
-    const isFirst = (this.value === 0);
-    const getLast = (this.list.length - 1);
-    const defaultCase = (this.value - 1) % INTERVAL_COUNT;
-
-    const value = isFirst ? getLast : defaultCase;
-    return this.fromValue[value];
+    return this.minus("b2");
 };
 
 Interval.prototype.sharp = function() {
-    const isLast = (this.value === (this.list.length - 1));
-    const getFirst = 0;
-    const defaultCase = ((this.value - 1) % INTERVAL_COUNT);
-
-    const value = isLast ? getFirst : defaultCase;
-    return this.fromValue(value);
+//  console.log(this);
+    return this.plus("b2");
 };
 
 Interval.prototype.getSum = function(intervalString) {
@@ -81,7 +72,9 @@ Interval.prototype.getSum = function(intervalString) {
 
 Interval.prototype.getDifference = function(intervalString) {
     var value = Interval.prototype.getSum.call(this, intervalString);
-    return -value + INTERVAL_COUNT;
+    console.log("val",value);
+    console.log("calc",-(value) + (INTERVAL_COUNT));
+    return -(value) + (INTERVAL_COUNT);
 };
 
 Interval.prototype.plus = function(intervalString) {
