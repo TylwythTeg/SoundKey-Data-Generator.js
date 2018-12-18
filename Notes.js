@@ -40,6 +40,7 @@ Note.fromName = function(name, nameOverride = false) {
       note.name = name;
     } else {
       note.referenceName = refNote.name;
+      note.name = refNote.name;
     }
 
     return note;
