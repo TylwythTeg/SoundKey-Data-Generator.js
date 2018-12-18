@@ -38,13 +38,6 @@ Interval.fromValue = function(value) {
     });
 };
 
-
-Interval.prototype.fromName = function(value) {
-    return this.list.find(function(item) {
-      return item.name === value;
-    });
-};
-
 Interval.prototype.flat = function() {
     const isFirst = (this.value === 0);
     const getLast = (this.list.length - 1);
