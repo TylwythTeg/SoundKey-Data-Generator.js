@@ -1,5 +1,4 @@
 const Interval = require('./Intervals.js');
-const Utils = require('./Utils.js');
 
 const noteRegExp = "[A-G]";
 const accidentalRegExp = "[#,b]+";
@@ -82,12 +81,16 @@ module.exports = Note;
 
 // Test space
 
-console.log(Note.list);
-console.log(Note.fromName("G###").name);
-console.log(Note.fromName("F#").plus("b6"));
-console.log(Note.fromName("F#").plus("bb7"));
-console.log("A# + b2",Note.fromName("A#").plus("##7"));
-console.log("A# - b4",Note.fromName("A#").minus("b4"));
-console.log("A# flat",Note.fromName("A#").flat());
-console.log("A# sharp",Note.fromName("A#").sharp());
-console.log("A# sharp",Note.fromName("A#").minus("b5"));
+console.log("Note List:",Note.list);
+
+console.log("G### ===",Note.fromName("G###").name);
+console.log("F# + b6 (9+8)",Note.fromName("F#").plus("b6"));
+console.log("F# + bb7 (9 + 9)",Note.fromName("F#").plus("bb7"));
+console.log("A# + b2 (1+1)",Note.fromName("A#").plus("##7"));
+console.log("A# - b4 (1-4)",Note.fromName("A#").minus("b4"));
+console.log("A#.flat() (1-1)",Note.fromName("A#").flat());
+console.log("A#.flat() (1-1-1)",Note.fromName("A#").flat().flat());
+console.log("A# sharp() (1+1)",Note.fromName("A#").sharp());
+console.log("A# - b5 (1-6)",Note.fromName("A#").minus("b5"));
+
+console.log("A# - ##7 (1-13)",Note.fromName("A#").minus("##7"));

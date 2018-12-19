@@ -1,4 +1,4 @@
-const Utils = require('./Utils.js');
+
 const intervalDigitRegExp = "[1,2,3,4,5,6,7,8,9,10,11,12,13]+";
 const accidentalRegExp = "[#,b]+";
 const names = [
@@ -44,47 +44,31 @@ Interval.prototype.flat = function() {
 };
 
 Interval.prototype.sharp = function() {
-//  console.log(this);
     return this.plus("b2");
 };
 
-Interval.prototype.getSum = function(intervalString) {
-    const accidentalString = intervalString.match(accidentalRegExp)[0];
-    const accidentalValue = Interval.getAccidentalValue(accidentalString);
-    const referenceIntervalString = intervalString.match(intervalDigitRegExp)[0];
-    const referenceInterval = Interval.fromName(referenceIntervalString);
-    const sum = accidentalValue + referenceInterval.value + this.value;
+Interval.prototype.getSum = function(intervalValue) {
+    return (Interval.normalizeIntervalValue(this.value + intervalValue));
 
-    const noChange = ((sum % INTERVAL_COUNT) === 0);
-    if (noChange) {
-        return this.value;
-    }
-
-    // find destination value since it changed
-    var value;
-    if (sum < 0) {
-        value = INTERVAL_COUNT + (sum % INTERVAL_COUNT);
-    } else {
-        value = (sum % INTERVAL_COUNT);
-    }
-    return value;
 };
 
-Interval.prototype.getDifference = function(intervalString) {
-    var value = Interval.prototype.getSum.call(this, intervalString);
-    console.log("val",value);
-    console.log("calc",-(value) + (INTERVAL_COUNT));
-    return (-(value) + (INTERVAL_COUNT) + this.value+1)% 12;
+Interval.intervalStringToInterval = function(intervalString) {
+  const accidentalString = intervalString.match(accidentalRegExp)[0];
+  const accidentalValue = Interval.getAccidentalValue(accidentalString);
+  const referenceIntervalString = intervalString.match(intervalDigitRegExp)[0];
+  const referenceInterval = Interval.fromName(referenceIntervalString);
+  return Interval.normalizeIntervalValue(referenceInterval.value + accidentalValue);
 };
 
 Interval.prototype.plus = function(intervalString) {
-    const value = Interval.prototype.getSum.call(this, intervalString);
+    const noramlizedInterval = Interval.intervalStringToInterval(intervalString);
+    const value = Interval.prototype.getSum.call(this, noramlizedInterval);
     const constructor = Object.getPrototypeOf(this).constructor;
     return constructor.fromValue(value);
 };
-
 Interval.prototype.minus = function(intervalString) {
-    var value = Interval.prototype.getDifference.call(this, intervalString);
+    const noramlizedInterval = Interval.intervalStringToInterval(intervalString);
+    const value = Interval.prototype.getSum.call(this, -noramlizedInterval);
     const constructor = Object.getPrototypeOf(this).constructor;
     return constructor.fromValue(value);
 };
@@ -107,6 +91,13 @@ Interval.getAccidentalValue = function(accidentalString) {
     return count;
 };
 
+Interval.normalizeIntervalValue = function (value) {
+    if(value >= 0) return value % INTERVAL_COUNT;
+    var x = Math.floor(Math.abs(value/INTERVAL_COUNT));
+    var y = (x+1)*INTERVAL_COUNT;
+    return (y + value);
+}
+
 
 Interval.behavior = {
   flat: Interval.prototype.flat,
@@ -124,4 +115,4 @@ Interval.behavior = {
 
 module.exports = Interval;
 
-//console.log(Interval.fromName("2").plus("bb7"));
+console.log("Interval List:",Interval.list);
